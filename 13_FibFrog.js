@@ -1,7 +1,4 @@
-var inp = [0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0] 
- [1, 0, 0, 0, 0]
-// you can write to stdout for debugging purposes, e.g.
-// console.log('this is a debug message');
+
 
 function solution(A) {
     var len = A.length
@@ -11,9 +8,10 @@ function solution(A) {
         return 1
     
     var F = len+2
-    var f2=1, f1=1, f0
-    var inF = new Array(F).fill(0)
     
+    //Create fibbonacci numbers
+    var f2=1, f1=1, f0
+    var fibs = [1]
     for (var i=2; i<=F; i++) {
 
         f0 = f2 + f1
@@ -23,35 +21,36 @@ function solution(A) {
         
         if (f0 > F)
             break
-        inF[f0] = 1
+        fibs.push(f0)
     }
-    
-    // position of leafs
-    var leafs = [-1]
-    for (let i=0; i<len; i++)
-        if (A[i])
-            leafs.push(i)
-    
-    // add the position of the ground at the end
-    leafs.push(len)
-    
-    // -1 -> 0
-    var jumpTo = new Array(F+1).fill(-1)
-    jumpTo[0] = 0
 
-    for (var i=1, leafLen=leafs.length; i<leafLen; i++) {
-        for (let j=0; j<i; j++) {
-            if (jumpTo[leafs[j]+1] >= 0)
-                if (inF[ leafs[i] - leafs[j] ] === 1) {
-                    jumpTo[leafs[i] + 1] = jumpTo[leafs[j] + 1] + 1
+    A.push(1)
+    len++
 
-                    break
-                }
+    var jumps = new Array(len).fill(0)
+
+    fibs.forEach(fib =>{
+      if (A[fib-1]) {
+          jumps[fib-1] = 1
+      }
+    })
+
+    
+    
+    for (let i=1; i<len; i++) {
+        for (let j=0, fibLen=fibs.length; j<fibLen; j++) {
+            var dist = i - fibs[j]
+            if (dist<0) break
+            if (A[dist] && A[i] && jumps[dist]!=0 && (jumps[i] === 0 || jumps[i] > jumps[dist]+1)) {
+                jumps[i] = jumps[dist]+1
+            }
         }
     }
-    
-    return jumpTo[len+1]
 
+    var f = 3
 }
 
-solution(inp)
+var inp = [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
+console.table(inp)
+// solution(inp)?
+solution([0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0] )
